@@ -22,6 +22,13 @@ enum validation {INVALID, TWOLEFT, ONELEFT, TWORIGHT, ONERIGHT};
 namespace game
 {
 	lily stage[] ={GREEN, GREEN, GREEN, EMPTY, BROWN, BROWN, BROWN};
+	
+	struct state
+	{
+		lily stage[7];
+		int operation;
+		state* parent;
+	};
 }
 
 void printStage();

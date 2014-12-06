@@ -1,0 +1,68 @@
+
+digraph ""
+{
+  A [label="A\n)))_((("] ;
+
+    A -> B [label="2"] ;
+    B [label="B\n)_))((("] ;
+
+      B -> C [label="1"] ;
+      C [label="C\n_)))((("] ;
+
+    A -> D [label="3"] ;
+    D [label="D\n))_)((("] ;
+
+      D -> E [label="5"] ;
+      E [label="E\n))()_(("] ;
+
+        E -> F [label="6"] ;
+        F [label="F\n))()(_("] ;
+
+          F -> G [label="4"] ;
+          G [label="G\n))(_()("] ;
+
+            G -> H [label="2"] ;
+            H [label="H\n)_()()("] ;
+
+              H -> I [label="1"] ;
+              I [label="I\n_)()()("] ;
+
+                I -> J [label="3"] ;
+                J [label="J\n()_)()("] ;
+                
+                  J -> K [label="2"] ;
+                  K [label="K\n(_))()("] ;
+                  
+                J -> L [label="5"] ;
+                L [label="L\n()()_)("] ;
+                
+                  L -> M [label="4"] ;
+                  M [label="M\n()(_))("] ;
+                  
+                    M -> N [label="2"] ;
+                    N [label="N\n(_()))("] ;
+
+                      N -> O [label="3"] ;
+                      O [label="O\n((_)))("] ;
+
+                  L -> P [label="7"] ;
+                  P [label="P\n()()()_"] ;
+
+                    P -> Q [label="6"] ;
+                    Q [label="Q\n()()(_)"] ;
+
+                      Q -> R [label="4"] ;
+                      R [label="R\n()(_())"] ;
+
+                        R -> S [label="2"] ;
+                        S [label="S\n(_()())"] ;
+
+                          S -> T [label="3"] ;
+                          T [label="T\n((_)())"] ;
+
+                            T -> U [label="5"] ;
+                            U [label="U\n((()_))"] ;
+
+                              U -> V [label="4"] ;
+                              V [label="V\n(((_)))"][peripheries=2] ;
+}

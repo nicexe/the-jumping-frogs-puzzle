@@ -25,30 +25,45 @@ public:
 	lily lake[7];
 	int operation;
 	State* parent;
+
+	State(lily[], State*);
+	State(State*);
+	static void childOf(State*, State*);
 };
 
-namespace game
+State::State (lily la[], State* p)
+{
+	State::childOf(parent, p);
+	for (int i=0; i<7; i++)
+	{
+		this->lake[i]=la[i];
+	}
+}
+
+State::State (State* p)
+{
+	State::childOf(parent, p);
+}
+
+void State::childOf(State* c, State* p)
+{
+	c->parent=p;
+}
+
+int main (int argc, char const *argv[])
 {
 	lily startingState[] = {GREEN, GREEN, GREEN, EMPTY, BROWN, BROWN, BROWN}; // This is the starting state
 	
 	stack <State> open; // OPEN stack
 	stack <State> close; // CLOSE stack
-	
-	State *Root = new State;
-}
 
-void childOf(State*, State*);
+	State* Root = new State(startingState, NULL);
+	open.push(Root); delete Root;
 
-int main (int argc, char const *argv[])
-{
-	game::Root->parent=NULL; // the root node has no parent
-	copy(begin(game::startingState), end(game::startingState), begin(game::Root->lake)); // Root node is now the starting state
+//	while (open.empty())
+//	{
+//		
+//	}
 	
 	return 0;
-}
-
-
-void childOf(State*A, State*B)
-{
-	A->parent=B;
 }

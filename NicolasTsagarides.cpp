@@ -64,12 +64,15 @@ int main (int argc, char const *argv[])
         
         if (lakesEqual(currentState, acceptedState))
         {
-            stack <State> solutionPath;
-            solutionPath.push(State(currentState, ThisNode, currentOperation));
+            stack <State*> solutionPath;
+//            solutionPath.push(State(currentState, ParentNode, currentOperation));
+            solutionPath.push(ThisNode);
             
-            while (solutionPath.top().parent == NULL) // filling the solutionPath stack with the nodes
+            while (solutionPath.top()->parent != NULL) // filling the solutionPath stack with the nodes
             {
-                solutionPath.push( State(solutionPath.top().parent->lake, solutionPath.top().parent->parent, solutionPath.top().parent->derivedFromOperation) );
+//                solutionPath.push( State(solutionPath.top()->parent->lake, solutionPath.top()->parent->parent, solutionPath.top()->parent->derivedFromOperation) );
+                solutionPath.push(ThisNode->parent);
+                ThisNode=ThisNode->parent;
             }
             
             cout << "Jumps as follows:\n";
@@ -78,50 +81,57 @@ int main (int argc, char const *argv[])
             
             while ( !solutionPath.empty() )
             {
-                cout << "frog on place " << solutionPath.top().derivedFromOperation;
+                cout << "frog on place " << solutionPath.top()->derivedFromOperation;
             }
             
             break;
         }
         else
         {
-            close.push(State(currentState, ParentNode));
+            close.push(State(currentState, ParentNode, currentOperation));
             for (int i=0; i<7; i++)
             {
                 validation action = valid(currentState, i); // checking which action is valid if any
                 
+                lily newState[7];
+                
+                for (int j=0; j<7; j++)
+                {
+                    newState[j]=currentState[j];
+                }
+                
                 switch(action) // performs the valid action if any
                 {
                     case TWOLEFT:
-                        currentState[i]=EMPTY; // frog jumps
-                        currentState[i-2]=BROWN; // frog lands 2 spots to the left
-                        if ( !nodeAlreadyExpanded(currentState, open) && !nodeAlreadyExpanded(currentState, close) ) // checking if current state is already in the open or close stack
+                        newState[i]=EMPTY; // frog jumps
+                        newState[i-2]=BROWN; // frog lands 2 spots to the left
+                        if ( !nodeAlreadyExpanded(newState, open) && !nodeAlreadyExpanded(newState, close) ) // checking if current state is already in the open or close stack
                         {
-                            expandedStates.push(State(currentState, ThisNode, i)); // add the current state to the OPEN stack
+                            expandedStates.push(State(newState, ThisNode, i)); // add the current state to the OPEN stack
                         }
                         break;
                     case ONELEFT:
-                        currentState[i]=EMPTY;
-                        currentState[i-2]=BROWN;
-                        if ( !nodeAlreadyExpanded(currentState, open) && !nodeAlreadyExpanded(currentState, close) )
+                        newState[i]=EMPTY;
+                        newState[i-1]=BROWN;
+                        if ( !nodeAlreadyExpanded(newState, open) && !nodeAlreadyExpanded(newState, close) )
                         {
-                            expandedStates.push(State(currentState, ThisNode, i));
+                            expandedStates.push(State(newState, ThisNode, i));
                         }
                         break;
                     case TWORIGHT:
-                        currentState[i]=EMPTY;
-                        currentState[i+2]=GREEN;
-                        if ( !nodeAlreadyExpanded(currentState, open) && !nodeAlreadyExpanded(currentState, close) )
+                        newState[i]=EMPTY;
+                        newState[i+2]=GREEN;
+                        if ( !nodeAlreadyExpanded(newState, open) && !nodeAlreadyExpanded(newState, close) )
                         {
-                            expandedStates.push(State(currentState, ThisNode, i));
+                            expandedStates.push(State(newState, ThisNode, i));
                         }
                         break;
                     case ONERIGHT:
-                        currentState[i]=EMPTY;
-                        currentState[i+1]=GREEN;
-                        if ( !nodeAlreadyExpanded(currentState, open) && !nodeAlreadyExpanded(currentState, close) )
+                        newState[i]=EMPTY;
+                        newState[i+1]=GREEN;
+                        if ( !nodeAlreadyExpanded(newState, open) && !nodeAlreadyExpanded(newState, close) )
                         {
-                            expandedStates.push(State(currentState, ThisNode, i));
+                            expandedStates.push(State(newState, ThisNode, i));
                         }
                         break;
                     default:
@@ -130,6 +140,13 @@ int main (int argc, char const *argv[])
             }
             while (!expandedStates.empty()) // emptying the expanded states in the open stack
             {
+//                lily tempState[7];
+//                copy(begin(expandedStates.top().lake), end(expandedStates.top().lake), begin(tempState));
+//                State* tempParent = expandedStates.top().parent;
+//                int tempDerivedFrom = expandedStates.top().derivedFromOperation;
+//                
+//                open.push(State(tempState, tempParent, tempDerivedFrom));
+                
                 open.push(expandedStates.top());
                 expandedStates.pop();
             }
@@ -174,7 +191,7 @@ validation valid (lily lake[], int i)
                 return (ONERIGHT);
             }
         }
-        else if (i<5)
+        if (i<5)
         {
             if ( (lake[i+2]) == EMPTY)
             {
@@ -191,11 +208,11 @@ validation valid (lily lake[], int i)
                 return (ONELEFT);
             }
         }
-        else if (i>1)
+        if (i>1)
         {
             if (lake[i-2]==EMPTY)
             {
-                return (ONERIGHT);
+                return (TWOLEFT);
             }
         }
     }

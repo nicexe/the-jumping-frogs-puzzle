@@ -9,8 +9,7 @@
 // Brown jumps two spots
 // Simplified into one operation:
 // Frog on place x jumps to the empty spot
-// frogJumps(x)
-// The priority is from x = 0 to x = 6
+// The priority is from frog x = 0 to frog x = 6
 
 #include <iostream>
 #include <stack>
@@ -19,50 +18,74 @@ using namespace std;
 enum lily {EMPTY, GREEN, BROWN};
 enum validation {INVALID, TWOLEFT, ONELEFT, TWORIGHT, ONERIGHT};
 
-validation valid(lily[], int);
-bool lakesEqual(lily[], lily[]);
-
 class State
 {
 public:
     lily lake[7];
-    int operation;
     State* parent;
+    int derivedFromOperation = -1; // -1 means no operation was performed
     
     State(lily[], State*);
+    State(lily[], State*, int);
     State(State*);
     static void childOf(State*, State*);
 };
 
+validation valid(lily[], int);
+bool lakesEqual(lily[], lily[]);
+bool nodeAlreadyExpanded(lily[], stack <State>);
+
 int main (int argc, char const *argv[])
 {
     lily startingState[] = {GREEN, GREEN, GREEN, EMPTY, BROWN, BROWN, BROWN}; // This is the starting state
-    lily acceptedState[] = {BROWN, BROWN, BROWN, EMPTY, GREEN, GREEN ,GREEN}; // This is the goal
+    lily acceptedState[] = {BROWN, BROWN, BROWN, EMPTY, GREEN, GREEN, GREEN}; // This is the goal
     
     stack <State> open; // OPEN stack
     stack <State> close; // CLOSE stack
+    stack <State> expandedStates; // temporary stack to put the expanded states before pushing them in the open stack
     
-    open.push(State(startingState, NULL)); // push the starting state to the OPEN stack
+    open.push(State(startingState, NULL, -1)); // push the starting state to the OPEN stack
     
     State* ParentNode;
+    State* ThisNode;
     
     lily currentState[7];
     
-    while (open.empty())
+    int currentOperation;
+    
+    while (!open.empty())
     {
         copy(begin(open.top().lake), end(open.top().lake), begin(currentState)); // get the current state
-        ParentNode = open.top().parent; // saving the parent of the state to be pusdhed into the CLOSE stack later
+        ParentNode = open.top().parent; // saving the parent of the state to be pushed into the CLOSE stack later
+        ThisNode = &open.top(); // saving this node to be used as a parent on the expanded nodes
+        currentOperation = open.top().derivedFromOperation;
         
         open.pop(); // pop the current state from the OPEN stack
         
         if (lakesEqual(currentState, acceptedState))
         {
-            // TODO: print the result
+            stack <State> solutionPath;
+            solutionPath.push(State(currentState, ThisNode, currentOperation));
+            
+            while (solutionPath.top().parent == NULL) // filling the solutionPath stack with the nodes
+            {
+                solutionPath.push( State(solutionPath.top().parent->lake, solutionPath.top().parent->parent, solutionPath.top().parent->derivedFromOperation) );
+            }
+            
+            cout << "Jumps as follows:\n";
+            
+            solutionPath.pop(); // discard the first node from the stack since its the root node
+            
+            while ( !solutionPath.empty() )
+            {
+                cout << "frog on place " << solutionPath.top().derivedFromOperation;
+            }
+            
             break;
         }
         else
         {
-            close.push(State(currentState, ParentNode)); // push the current state into the CLOSE stack
+            close.push(State(currentState, ParentNode));
             for (int i=0; i<7; i++)
             {
                 validation action = valid(currentState, i); // checking which action is valid if any
@@ -72,30 +95,43 @@ int main (int argc, char const *argv[])
                     case TWOLEFT:
                         currentState[i]=EMPTY; // frog jumps
                         currentState[i-2]=BROWN; // frog lands 2 spots to the left
-                        open.push(State(currentState, ParentNode)); // add the current state to the OPEN stack
+                        if ( !nodeAlreadyExpanded(currentState, open) && !nodeAlreadyExpanded(currentState, close) ) // checking if current state is already in the open or close stack
+                        {
+                            expandedStates.push(State(currentState, ThisNode, i)); // add the current state to the OPEN stack
+                        }
                         break;
                     case ONELEFT:
                         currentState[i]=EMPTY;
                         currentState[i-2]=BROWN;
-                        open.push(State(currentState, ParentNode));
-                        break;
-                    case ONERIGHT:
-                        currentState[i]=EMPTY;
-                        currentState[i+1]=GREEN;
-                        open.push(State(currentState, ParentNode));
+                        if ( !nodeAlreadyExpanded(currentState, open) && !nodeAlreadyExpanded(currentState, close) )
+                        {
+                            expandedStates.push(State(currentState, ThisNode, i));
+                        }
                         break;
                     case TWORIGHT:
                         currentState[i]=EMPTY;
                         currentState[i+2]=GREEN;
-                        open.push(State(currentState, ParentNode));
+                        if ( !nodeAlreadyExpanded(currentState, open) && !nodeAlreadyExpanded(currentState, close) )
+                        {
+                            expandedStates.push(State(currentState, ThisNode, i));
+                        }
                         break;
-                    case INVALID:
+                    case ONERIGHT:
+                        currentState[i]=EMPTY;
+                        currentState[i+1]=GREEN;
+                        if ( !nodeAlreadyExpanded(currentState, open) && !nodeAlreadyExpanded(currentState, close) )
+                        {
+                            expandedStates.push(State(currentState, ThisNode, i));
+                        }
                         break;
                     default:
                         break;
                 }
-                
-                
+            }
+            while (!expandedStates.empty()) // emptying the expanded states in the open stack
+            {
+                open.push(expandedStates.top());
+                expandedStates.pop();
             }
         }
     }
@@ -103,21 +139,26 @@ int main (int argc, char const *argv[])
     return 0;
 }
 
-State::State (lily la[], State* p)
+State::State (lily la[], State* p) // creating a state with a specified lake layout and a specified parent
 {
     State::childOf(this, p);
     for (int i=0; i<7; i++)
     {
-        this->lake[i]=la[i];
+        lake[i]=la[i];
     }
 }
 
-State::State (State* p)
+State::State (lily la[], State* p, int op) : State(la, p) // also setting the operation that this node was generated from
+{
+    derivedFromOperation = op;
+}
+
+State::State (State* p) // creating a state with a specified parent
 {
     State::childOf(parent, p);
 }
 
-void State::childOf(State* c, State* p)
+void State::childOf(State* c, State* p) // setting the parent of the state
 {
     c->parent=p;
 }
@@ -162,7 +203,7 @@ validation valid (lily lake[], int i)
     return (INVALID);
 }
 
-bool lakesEqual(lily a[], lily b[])
+bool lakesEqual(lily a[], lily b[]) // check if lakes are equal
 {
     bool equality = true;
     for (int i=0; i<6; i++)
@@ -174,4 +215,17 @@ bool lakesEqual(lily a[], lily b[])
     }
     
     return (equality);
+}
+
+bool nodeAlreadyExpanded(lily la[], stack <State> st) // check if the state already exist in the stack
+{
+    while (!st.empty())
+    {
+        if (lakesEqual(la, st.top().lake))
+        {
+            return true;
+        }
+        st.pop();
+    }
+    return false;
 }

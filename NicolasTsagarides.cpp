@@ -140,13 +140,6 @@ int main (int argc, char const *argv[])
             }
             while (!expandedStates.empty()) // emptying the expanded states in the open stack
             {
-//                lily tempState[7];
-//                copy(begin(expandedStates.top().lake), end(expandedStates.top().lake), begin(tempState));
-//                State* tempParent = expandedStates.top().parent;
-//                int tempDerivedFrom = expandedStates.top().derivedFromOperation;
-//                
-//                open.push(State(tempState, tempParent, tempDerivedFrom));
-                
                 open.push(expandedStates.top());
                 expandedStates.pop();
             }

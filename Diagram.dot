@@ -2,67 +2,88 @@
 digraph ""
 {
   A [label="A\n)))_((("] ;
-
     A -> B [label="2"] ;
-    B [label="B\n)_))((("] ;
-
-      B -> C [label="1"] ;
-      C [label="C\n_)))((("] ;
-
-    A -> D [label="3"] ;
-    D [label="D\n))_)((("] ;
-
-      D -> E [label="5"] ;
-      E [label="E\n))()_(("] ;
-
-        E -> F [label="6"] ;
-        F [label="F\n))()(_("] ;
-
-          F -> G [label="4"] ;
-          G [label="G\n))(_()("] ;
-
-            G -> H [label="2"] ;
-            H [label="H\n)_()()("] ;
-
-              H -> I [label="1"] ;
-              I [label="I\n_)()()("] ;
-
-                I -> J [label="3"] ;
-                J [label="J\n()_)()("] ;
-                
-                  J -> K [label="2"] ;
-                  K [label="K\n(_))()("] ;
-                  
-                J -> L [label="5"] ;
-                L [label="L\n()()_)("] ;
-                
-                  L -> M [label="4"] ;
-                  M [label="M\n()(_))("] ;
-                  
-                    M -> N [label="2"] ;
-                    N [label="N\n(_()))("] ;
-
-                      N -> O [label="3"] ;
-                      O [label="O\n((_)))("] ;
-
-                  L -> P [label="7"] ;
-                  P [label="P\n()()()_"] ;
-
-                    P -> Q [label="6"] ;
-                    Q [label="Q\n()()(_)"] ;
-
-                      Q -> R [label="4"] ;
-                      R [label="R\n()(_())"] ;
-
-                        R -> S [label="2"] ;
-                        S [label="S\n(_()())"] ;
-
-                          S -> T [label="3"] ;
-                          T [label="T\n((_)())"] ;
-
-                            T -> U [label="5"] ;
-                            U [label="U\n((()_))"] ;
-
-                              U -> V [label="4"] ;
-                              V [label="V\n(((_)))"][peripheries=2] ;
+      B [label="B\n)_))((("] ;
+        B -> F [label="1"] ;
+          F [label="F\n_)))((("] ;
+    A -> C [label="3"] ;
+      C [label="C\n))_)((("] ;
+        C -> G [label="5"] ;
+          G [label="G\n))()_(("] ;
+            G -> H [label="4"] ;
+              H [label="H\n))(_)(("] ;
+                H -> K [label="2"] ;
+                  K [label="K\n)_())(("] ;
+                    K -> M [label="1"] ;
+                      M [label="M\n_)())(("] ;
+                        M -> O [label="3"] ;
+                          O [label="O\n()_))(("] ;
+                            O -> P [label="2"] ;
+                              P [label="P\n(_)))(("] ;
+                    K -> N [label="3"] ;
+                      N [label="N\n)(_))(("] ;
+                        N -> Q [label="1"] ;
+                          Q [label="Q\n_()))(("] ;
+                            Q -> R [label="2"] ;
+                              R [label="R\n(_)))(("] ;
+                H -> L [label="6"] ;
+                  L [label="L\n))(()_("] ;
+                    L -> S [label="5"] ;
+                      S [label="S\n))((_)("] ;
+                        S -> U [label="7"] ;
+                          U [label="U\n))((()_"] ;
+                            U -> V [label="6"] ;
+                              V [label="V\n))(((_)"] ;
+                    L -> T [label="7"] ;
+                      T [label="T\n))(()(_"] ;
+                        T -> W [label="5"] ;
+                          W [label="W\n))((_()"] ;
+                            W -> X [label="6"] ;
+                              X [label="X\n))(((_)"] ;
+            G -> I [label="6"] ;
+              I [label="I\n))()(_("] ;
+                I -> Y [label="4"] ;
+                  Y [label="Y\n))(_()("] ;
+                    Y -> Z [label="2"] ;
+                      Z [label="Z\n)_()()("] ;
+                        Z -> AB [label="1"] ;
+                          AB [label="AB\n_)()()("] ;
+                            AB -> AD [label="2"] ;
+                              AD [label="AD\n()_)()("] ;
+                                AD -> AE [label="2"] ;
+                                  AE [label="AE\n(_))()("] ;
+                                AD -> AF [label="5"] ;
+                                  AF [label="AF\n()()_)("] ;
+                                    AF -> AG [label="4"] ;
+                                      AG [label="AG\n()(_))("] ;
+                                        AG -> AI [label="2"] ;
+                                          AI [label="AI\n(_()))("] ;
+                                            AI -> AJ [label="3"] ;
+                                              AJ [label="AJ\n((_)))("] ;
+                                    AF -> AH [label="7"] ;
+                                      AH [label="AH\n()()()_"] ;
+                                        AH -> AK [label="6"] ;
+                                          AK [label="AK\n()()(_)"] ;
+                                            AK -> AL [label="4"] ;
+                                              AL [label="AL\n()(_())"] ;
+                                                AL -> AM [label="2"] ;
+                                                  AM [label="AM\n(_()())"] ;
+                                                    AM -> AO [label="3"] ;
+                                                      AO [label="AO\n((_)())"] ;
+                                                        AO -> AP [label="5"] ;
+                                                          AP [label="AP\n((()_))"] ;
+                                                            AP -> AQ [label="4"] ;
+                                                              AQ [label="AQ\n(((_)))"][peripheries=2] ;
+                                                AL -> AN [label="5"] ;
+                                                  AN [label="AN\n()((_))"] ;
+                        Z -> AC [label="3"] ;
+                          AC [label="AC\n)(_)()("] ;
+                    Y -> AA [label="5"] ;
+                      AA [label="AA\n))((_)("] ;
+            G -> J [label="7"] ;
+              J [label="J\n))()((_"] ;
+    A -> D [label="5"] ;
+      D [label="D\n)))(_(("] ;
+    A -> E [label="6"] ;
+      E [label="E\n)))((_("] ;
 }

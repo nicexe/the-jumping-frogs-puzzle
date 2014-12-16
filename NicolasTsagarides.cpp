@@ -24,9 +24,11 @@ public:
     lily lake[7];
     State* parent;
     int derivedFromOperation = -1; // -1 means no operation was performed
+    lily colorOfParent;
     
     State(lily[], State*);
     State(lily[], State*, int);
+    State(lily[], State*, int, lily);
     State(State*);
     static void childOf(State*, State*);
 };
@@ -44,12 +46,13 @@ int main (int argc, char const *argv[])
     stack <State> close; // CLOSE stack
     stack <State> expandedStates; // temporary stack to put the expanded states before pushing them in the open stack
     
-    open.push(State(startingState, NULL, -1)); // push the starting state to the OPEN stack
+    open.push(State(startingState, NULL, -1, EMPTY)); // push the starting state to the OPEN stack
     
     State* ParentNode;
     State* ThisNode;
     
     lily currentState[7];
+    lily currentColorOfParent = EMPTY;
     
     int currentOperation;
     
@@ -57,20 +60,19 @@ int main (int argc, char const *argv[])
     {
         copy(begin(open.top().lake), end(open.top().lake), begin(currentState)); // get the current state
         ParentNode = open.top().parent; // saving the parent of the state to be pushed into the CLOSE stack later
-        ThisNode = &open.top(); // saving this node to be used as a parent on the expanded nodes
+        ThisNode = new State(&open.top()); // saving this node to be used as a parent on the expanded nodes
         currentOperation = open.top().derivedFromOperation;
+        currentColorOfParent = open.top().colorOfParent;
         
         open.pop(); // pop the current state from the OPEN stack
         
         if (lakesEqual(currentState, acceptedState))
         {
             stack <State*> solutionPath;
-//            solutionPath.push(State(currentState, ParentNode, currentOperation));
             solutionPath.push(ThisNode);
             
             while (solutionPath.top()->parent != NULL) // filling the solutionPath stack with the nodes
             {
-//                solutionPath.push( State(solutionPath.top()->parent->lake, solutionPath.top()->parent->parent, solutionPath.top()->parent->derivedFromOperation) );
                 solutionPath.push(ThisNode->parent);
                 ThisNode=ThisNode->parent;
             }
@@ -81,14 +83,24 @@ int main (int argc, char const *argv[])
             
             while ( !solutionPath.empty() )
             {
-                cout << "frog on place " << solutionPath.top()->derivedFromOperation;
+                string color;
+                if (solutionPath.top()->colorOfParent == GREEN)
+                {
+                    color = "Green";
+                }
+                else if (solutionPath.top()->colorOfParent == BROWN)
+                {
+                    color = "Brown";
+                }
+                cout << color << " frog on place " << solutionPath.top()->derivedFromOperation << endl;
+                solutionPath.pop();
             }
             
             break;
         }
         else
         {
-            close.push(State(currentState, ParentNode, currentOperation));
+            close.push(State(currentState, ParentNode, currentOperation, currentColorOfParent));
             for (int i=0; i<7; i++)
             {
                 validation action = valid(currentState, i); // checking which action is valid if any
@@ -107,7 +119,7 @@ int main (int argc, char const *argv[])
                         newState[i-2]=BROWN; // frog lands 2 spots to the left
                         if ( !nodeAlreadyExpanded(newState, open) && !nodeAlreadyExpanded(newState, close) ) // checking if current state is already in the open or close stack
                         {
-                            expandedStates.push(State(newState, ThisNode, i)); // add the current state to the OPEN stack
+                            expandedStates.push(State(newState, ThisNode, i, BROWN)); // add the current state to the OPEN stack
                         }
                         break;
                     case ONELEFT:
@@ -115,7 +127,7 @@ int main (int argc, char const *argv[])
                         newState[i-1]=BROWN;
                         if ( !nodeAlreadyExpanded(newState, open) && !nodeAlreadyExpanded(newState, close) )
                         {
-                            expandedStates.push(State(newState, ThisNode, i));
+                            expandedStates.push(State(newState, ThisNode, i, BROWN));
                         }
                         break;
                     case TWORIGHT:
@@ -123,7 +135,7 @@ int main (int argc, char const *argv[])
                         newState[i+2]=GREEN;
                         if ( !nodeAlreadyExpanded(newState, open) && !nodeAlreadyExpanded(newState, close) )
                         {
-                            expandedStates.push(State(newState, ThisNode, i));
+                            expandedStates.push(State(newState, ThisNode, i, GREEN));
                         }
                         break;
                     case ONERIGHT:
@@ -131,7 +143,7 @@ int main (int argc, char const *argv[])
                         newState[i+1]=GREEN;
                         if ( !nodeAlreadyExpanded(newState, open) && !nodeAlreadyExpanded(newState, close) )
                         {
-                            expandedStates.push(State(newState, ThisNode, i));
+                            expandedStates.push(State(newState, ThisNode, i, GREEN));
                         }
                         break;
                     default:
@@ -163,9 +175,23 @@ State::State (lily la[], State* p, int op) : State(la, p) // also setting the op
     derivedFromOperation = op;
 }
 
-State::State (State* p) // creating a state with a specified parent
+State::State (lily la[], State* p, int op, lily c) : State(la, p, op) // also setting the color of the frog from the parent node
 {
-    State::childOf(parent, p);
+    colorOfParent = c;
+}
+
+State::State (State* s)
+{
+    for (int i=0; i<7; i++)
+    {
+        lake[i]=s->lake[i];
+    }
+    
+    derivedFromOperation = s->derivedFromOperation;
+    
+    parent = s->parent;
+    
+    colorOfParent = s->colorOfParent;
 }
 
 void State::childOf(State* c, State* p) // setting the parent of the state

@@ -92,7 +92,7 @@ int main (int argc, char const *argv[])
                 {
                     color = "Brown";
                 }
-                cout << color << " frog on place " << solutionPath.top()->derivedFromOperation << endl;
+                cout << color << " frog on place " << solutionPath.top()->derivedFromOperation + 1 << endl;
                 solutionPath.pop();
             }
             
